@@ -27,30 +27,31 @@ describe("evroute test suite", function() {
 
     it("simple graph 2", function() {
         var cy = cytoscape();
-        cy.add({ group: "nodes", data: { id: 0 } })
-        cy.add({ group: "nodes", data: { id: 1 } })
-        cy.add({ group: "edges", data: { id: 2, source: 0, target: 1 } })
+        cy.add({ group: "nodes", data: { id: 0 } });
+        cy.add({ group: "nodes", data: { id: 1 } });
+        cy.add({ group: "edges", data: { id: 2, source: 0, target: 1 } });
         expect(cy.nodes().size()).toEqual(2);
         expect(cy.edges().size()).toEqual(1);
     });
 
-    it("load graph", function () {
+    it("load graph", function (done) {
         var cy = cytoscape();
         var dataPath = path.join(__dirname, "../../chargers.json");
-        var chargers = JSON.parse(fs.readFileSync(dataPath));
+        fs.readFile(dataPath, function(err, data) {
+            expect(err).toBeFalsy();
+            var chargers = JSON.parse(data);
+            expect(chargers.length).toEqual(584);
 
-        expect(chargers.length).toEqual(584);
+            var quickChargers = chargers.filter(function(elem) {
+                return elem.Level === 3;
+            });
 
-        var quickChargers = chargers.filter(function(elem) {
-            return elem.Level === 3;
+            expect(quickChargers.length).toEqual(25);
+
+            for (var i = 0; i < quickChargers.length; i++) {
+                cy.add({ group: "nodes", data: { id: i }});
+            }
+            done();
         });
-
-        expect(quickChargers.length).toEqual(25);
-
-        for (var i = 0; i < quickChargers.length; i++) {
-            cy.add({ group: "nodes", data: { id: i }});
-        }
-
-        console.log(quickChargers);
     });
 });
