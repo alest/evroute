@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "start": "node ./bin/www"
+    "test": "jasmine"
   },
   "dependencies": {
     "body-parser": "~1.13.2",
@@ -17,10 +17,6 @@
     "serve-favicon": "~2.3.0"
   },
   "devDependencies": {
-    "jasmine": "^2.4.1"
-  },
-  "scripts": {
-    "test": "jasmine"
+    "mocha": "^2.3.4"
   }
-
 }
