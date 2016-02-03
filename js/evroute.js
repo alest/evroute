@@ -1,18 +1,19 @@
 var OSRM = require('osrm');
 
-function Charger(level, coord) {
+var Charger = function(level, coord) {
     this.level = level;
     this.coord = coord;
 };
 
-function EV(batteryCapacity, efficiency, chargerPower) {
-    this.batteryCapacity = batteryCapacity;
-    this.efficiency = efficiency;
-    this.chargerPower = chargerPower;
+Charger.prototype.chargeTime = function(energy, power) {
+    return energy / power;
 };
 
-var computeChargeTime(energy, power) {
-    return energy / power;
+// EV parameters
+function EvParams(bat, eff, pwr) {
+    this.bat = bat;
+    this.eff= eff;
+    this.pwr = pwr;
 };
 
 module.exports = {
