@@ -13,7 +13,7 @@ quebec-latest.osrm.hsgr: quebec-latest.osrm
 	osrm-prepare quebec-latest.osrm -p $(PROFILE) && osrm-datastore quebec-latest.osrm
 
 test: quebec-latest.osrm.hsgr
-	jasmine
+	mocha
 
 clean:
 	rm -f quebec-latest*
