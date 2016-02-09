@@ -51,10 +51,13 @@ describe("basic", function() {
         });
     });
     it("osrm route", function(done) {
+        this.timeout(10000);
         loadChargers(dataPath, function(chargers) {
             var quickChargers = chargers.filter(function(elem) {
                 return elem.Level === 3;
             });
+            var count = 0;
+            var total = (quickChargers.length * quickChargers.length) - quickChargers.length;
             for (var i = 0; i < quickChargers.length; i++) {
                 for (var j = 0; j < quickChargers.length; j++) {
                     if (i === j)
@@ -70,10 +73,13 @@ describe("basic", function() {
                     osrm.route(options, function(err, route) {
                         assert.ifError(err);
                         assert.ok(route.route_summary);
+                        count++;
+                        if (count == total) {
+                            done();
+                        }
                     });
                 }
             }
-            done();
         });
     });
 });
