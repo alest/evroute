@@ -35,18 +35,8 @@ var findChargerByUid = function(chargers, uid) {
             if (ids[j] === uid)
                 return chargers[i];
         }
-        return undefined;
     }
-    // Cannot call find on the charger array, mystery
-    /*
-    return chargers.find(function(elem) {
-        for (var i = 0; i < elem.Ids.length; i++) {
-            if (elem.Ids[i] === uid)
-                return true;
-        }
-        return false;
-    });
-    */
+    return undefined;
 };
 
 describe("basic", function() {
@@ -57,6 +47,9 @@ describe("basic", function() {
         cy.add({ group: "edges", data: { id: 2, source: 0, target: 1 } });
         assert.equal(2, cy.nodes().size());
         assert.equal(1, cy.edges().size());
+
+        var aStar = cy.elements().aStar({ root: "#0", goal: "#1", directed: true});
+        assert(aStar.path.length === 3);
     });
 
     it("load chargers", function (done) {
@@ -83,10 +76,11 @@ describe("basic", function() {
             var quickChargers = chargers.filter(function(elem) {
                 return elem.Level === 3;
             });
+            var n = 3;
             var count = 0;
-            var total = (quickChargers.length * quickChargers.length) - quickChargers.length;
-            for (var i = 0; i < quickChargers.length; i++) {
-                for (var j = 0; j < quickChargers.length; j++) {
+            var total = n * n - n;
+            for (var i = 0; i < n; i++) {
+                for (var j = 0; j < n; j++) {
                     if (i === j)
                         continue;
                     var c0 = quickChargers[i];
@@ -101,7 +95,7 @@ describe("basic", function() {
                         assert.ifError(err);
                         assert.ok(route.route_summary);
                         count++;
-                        if (count == total) {
+                        if (count === total) {
                             done();
                         }
                     });
@@ -119,7 +113,9 @@ describe("basic", function() {
             var counter = 0;
             var cy = cytoscape();
             for (var i = 0; i < quickChargers.length; i++) {
-                cy.add({ group: "nodes", data: { id: i, charger: quickChargers[i] } });
+                var qc = quickChargers[i];
+                qc.id = i;
+                cy.add({ group: "nodes", data: qc });
                 counter++;
             }
 
@@ -138,8 +134,11 @@ describe("basic", function() {
             // Montreal - Quebec
             var src = findChargerByUid(quickChargers, "46897f08-3ea4-4763-8f15-690371c482bc");
             var dst = findChargerByUid(quickChargers, "379db2c0-821c-4c49-8ff5-88bae15fba11");
-            var result = cy.aStar({root: src, goal: dst, directed: true});
-            console.log(result);
+            var srcStr = "#" + src.id;
+            var dstStr = "#" + dst.id;
+
+            var aStar = cy.elements().aStar({root: srcStr, goal: dstStr, directed: true});
+            assert(aStar.distance === 1);
             done();
         });
     });
