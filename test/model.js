@@ -150,4 +150,29 @@ describe("basic", function() {
         done();
     });
 
+    var coord = {
+        'quebec': [46.7524, -71.2889],
+        'cowansville': [45.1911, -72.7555]
+    };
+
+    var testRouteEnergy = function(dest) {
+        it("computes route energy", function (done) {
+            var options = {
+                coordinates: [[45.5054, -73.5612], dest],
+                compression: false
+            };
+            osrm.route(options, function (err, route) {
+                assert.ifError(err);
+                assert.ok(route.route_summary);
+                var dist = route.route_summary.total_distance / 1000.0;
+                var time = route.route_summary.total_time / 3600.0;
+                var e = evroute.computeEnergy(time, dist);
+                console.log("")
+                console.log("e=" + e + " route_summary:" + JSON.stringify(route.route_summary));
+                done();
+            });
+        });
+    };
+    testRouteEnergy(coord['quebec']);
+    testRouteEnergy(coord['cowansville']);
 });
