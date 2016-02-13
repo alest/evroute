@@ -1,21 +1,24 @@
 var OSRM = require('osrm');
 
-var Charger = function(level, coord) {
-    this.level = level;
-    this.coord = coord;
+var vehicules = {
+    'spark': {
+        'battery_kwh': 18.0
+    }
 };
 
-Charger.prototype.chargeTime = function(energy, power) {
-    return energy / power;
-};
-
-// EV parameters
-function EvParams(bat, eff, pwr) {
-    this.bat = bat;
-    this.eff= eff;
-    this.pwr = pwr;
+/*
+ * Compute energy for a segment
+ * @param  {number} time - travel time (h)
+ * @param {number} dist - total distance (km)
+ */
+var computeEnergy = function(time, dist) {
+    var v = Math.max(60, dist / time);
+    var coef = { 'a': 0.0024, 'b': 0.3156, 'c': 25.0939};
+    var kwh = dist * 0.01 * (coef.a * v * v - coef.b * v + coef.c);
+    return kwh;
 };
 
 module.exports = {
-    Charger: Charger
+    vehicules: vehicules,
+    computeEnergy: computeEnergy
 };

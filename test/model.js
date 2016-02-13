@@ -8,6 +8,7 @@ var fs = require('fs');
 var path = require('path');
 var OSRM = require('osrm');
 var osrm = new OSRM("quebec-latest.osrm");
+var evroute = require('../js/evroute');
 
 var dataPath = path.join(__dirname, "../chargers.json");
 
@@ -141,6 +142,12 @@ describe("basic", function() {
             assert(aStar.distance === 1);
             done();
         });
+    });
+
+    it("energy", function(done) {
+        var e = evroute.computeEnergy(2, 100);
+        assert(Math.abs(e - 14.8) < 0.5);
+        done();
     });
 
 });
